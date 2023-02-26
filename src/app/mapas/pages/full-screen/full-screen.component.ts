@@ -18,8 +18,6 @@ export class FullScreenComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('fullscreen');
-
     const map = new mapboxgl.Map({
       container: 'mapa', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
