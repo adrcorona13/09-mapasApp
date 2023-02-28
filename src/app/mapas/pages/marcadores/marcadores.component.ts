@@ -58,6 +58,8 @@ export class MarcadoresComponent {
     // })
     // .setLngLat(this.center)
     // .addTo(this.map);
+
+    
   }
 
   irMarcador(index: number) {
@@ -80,6 +82,17 @@ export class MarcadoresComponent {
       .addTo(this.map)
     this.marcadores.push({ color, marcador });
 
+    this.guardarMarcadoresLocalStorage();
+
+    marcador.on('dragend', () => {
+      this.guardarMarcadoresLocalStorage();
+    })
+  }
+
+  borrarMarcador(index: number){
+    this.marcadores[index].marcador?.remove();
+    this.marcadores[index].marcador?.off('dragend');
+    this.marcadores.splice(index, 1);
     this.guardarMarcadoresLocalStorage();
   }
 
@@ -117,6 +130,9 @@ export class MarcadoresComponent {
       this.marcadores.push({
         marcador,
         color: m.color
+      });
+      marcador.on('dragend', () => {
+        this.guardarMarcadoresLocalStorage();
       })
     });
     
