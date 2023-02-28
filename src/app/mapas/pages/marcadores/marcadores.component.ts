@@ -58,8 +58,13 @@ export class MarcadoresComponent {
     // .addTo(this.map);
   }
 
-  irMarcador(){
-      
+  irMarcador(index: number){
+
+    const marcador = this.marcadores[index];
+
+    this.map.flyTo({
+      center: marcador.marcador.getLngLat()
+    })
   }
 
   agregarMarcador(){
