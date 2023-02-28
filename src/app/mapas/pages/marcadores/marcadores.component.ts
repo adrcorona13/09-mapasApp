@@ -1,9 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 
-interface MarcadorCustom{
-  color: string;
-  marcador: mapboxgl.Marker
+interface MarcadorCustom {
+  color?: string;
+  marcador?: mapboxgl.Marker;
+  centro?: [number, number];
 }
 
 @Component({
@@ -47,6 +48,7 @@ export class MarcadoresComponent {
       zoom: this.zoomLevel, // starting zoom
     });
 
+    this.leerMarcadores();
 
     // const markerHtml: HTMLElement = document.createElement('div');
     // markerHtml.innerHTML = "hola mundo"
@@ -58,17 +60,17 @@ export class MarcadoresComponent {
     // .addTo(this.map);
   }
 
-  irMarcador(index: number){
+  irMarcador(index: number) {
 
     const marcador = this.marcadores[index];
 
     this.map.flyTo({
-      center: marcador.marcador.getLngLat()
+      center: marcador.marcador!.getLngLat()
     })
   }
 
-  agregarMarcador(){
-    const color = "#xxxxxx".replace(/x/g, y=>(Math.random()*16|0).toString(16));
+  agregarMarcador() {
+    const color = "#xxxxxx".replace(/x/g, y => (Math.random() * 16 | 0).toString(16));
 
     const marcador = new mapboxgl.Marker({
       draggable: true,
@@ -76,8 +78,47 @@ export class MarcadoresComponent {
     })
       .setLngLat(this.center)
       .addTo(this.map)
-    this.marcadores.push({color, marcador});
-    
+    this.marcadores.push({ color, marcador });
+
+    this.guardarMarcadoresLocalStorage();
   }
 
+  guardarMarcadoresLocalStorage() {
+
+    const arr: MarcadorCustom[] = [];
+
+    this.marcadores.forEach(m => {
+      const color = m.color;
+      const { lng, lat } = m.marcador!.getLngLat()
+      arr.push({
+        color,
+        centro: [lng, lat]
+      })
+    })
+
+    localStorage.setItem('marcadores', JSON.stringify(arr));
+  }
+
+
+  leerMarcadores(){
+    if (!localStorage.getItem('marcadores')) {
+      return;
+    }
+    const arr: MarcadorCustom[] = JSON.parse(localStorage.getItem('marcadores')!);
+    console.log(arr);
+
+    arr.forEach(m=> {
+      const marcador = new mapboxgl.Marker({
+        color: m.color,
+        draggable: true
+      })
+      .setLngLat(m.centro!)
+      .addTo(this.map);
+      this.marcadores.push({
+        marcador,
+        color: m.color
+      })
+    });
+    
+  }
 }
