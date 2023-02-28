@@ -1,6 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 
+interface MarcadorCustom{
+  color: string;
+  marcador: mapboxgl.Marker
+}
+
 @Component({
   selector: 'app-marcadores',
   templateUrl: './marcadores.component.html',
@@ -31,6 +36,8 @@ export class MarcadoresComponent {
   zoomLevel: number = 15;
 
   center: [number, number] = [-99.1240, 19.4426];
+
+  marcadores: MarcadorCustom[] = [];
 
   ngAfterViewInit(): void {
     this.map = new mapboxgl.Map({
@@ -64,6 +71,8 @@ export class MarcadoresComponent {
     })
       .setLngLat(this.center)
       .addTo(this.map)
+    this.marcadores.push({color, marcador});
+    
   }
 
 }
